@@ -1,0 +1,11 @@
+/** Initializes a new Game and starts running it. */
+class Main{
+      function void main(){
+            var Game game;
+            do Menu.run_menu();
+            let game = Game.new();
+            do game.run();
+            do game.dispose();
+            return;
+      }
+}

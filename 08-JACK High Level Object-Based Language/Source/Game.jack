@@ -1,0 +1,106 @@
+/** Handles the Game and user inputs */
+class Game{
+      field Shape basket;
+      field Shape diamond;
+      field int score;
+      
+      // Costructs a new Game
+      constructor Game new(){
+            let basket = Shape.new(15, 220, false);
+            let diamond = Shape.new(12, 17, true);
+            let score = 0;
+            do Shape.draw_Rect();
+            do basket.draw();
+            do diamond.draw();
+            return this;
+      }
+
+      // Disposes this Game
+      method void dispose(){
+            do basket.dispose();
+            do diamond.dispose();
+            do Memory.deAlloc(this);
+            return;
+      }
+
+      // Runs the game: handles the user's inputs and moves
+      method void run() {
+            var char key; // the key currently pressed by the user
+            var boolean exit;
+            var int random;
+            
+            do Output.moveCursor(1, 1);
+            do Output.printString("Score: ");
+            do Output.moveCursor(2, 1);
+            do Output.printInt(score);
+            
+            let exit = false;
+            
+            while(~exit) {
+
+                  // waits for a key to be pressed
+                  while(key = 0) {
+                        let key = Keyboard.keyPressed();
+                        do diamond.move_down();
+                        if(basket.validate(diamond)){
+                              let random = score*6+13*13;
+                              let random = Game.mod(random, 9);
+                              let random = random + 11; 
+                              let score = score + 1;
+                              do Output.moveCursor(2, 1);
+                              do Output.printInt(score);   
+                              do diamond.erase();
+                              do diamond.dispose();
+                              let diamond = Shape.new(random, 17, true);
+                        }
+                        if(diamond.die()){
+                              let exit = true;
+                        }
+                        do Sys.wait(100);
+                  }
+
+                  if(key = 81) { let exit = true; }    // q key
+                  if(key = 130) { do basket.move_left(); } // left arrow
+                  if(key = 132) { do basket.move_right(); } // right arrow
+
+                  // waits for the key to be released
+                  while (~(key = 0)) {
+                        let key = Keyboard.keyPressed();
+                        do diamond.move_down();
+                        if(basket.validate(diamond)){
+                              let random = score*6+13*13;
+                              let random = Game.mod(random, 9);
+                              let random = random + 11; 
+                              let score = score + 1;
+                              do Output.moveCursor(2, 1);
+                              do Output.printInt(score);
+                              do diamond.erase();
+                              do diamond.dispose();
+                              let diamond = Shape.new(random, 17, true);
+                        }
+                        if(diamond.die()){
+                              let exit = true;
+                        }
+                        do Sys.wait(100);
+                  }
+            }
+            // Ending the game
+            do Screen.clearScreen();
+            do Output.moveCursor(7, 7);
+            do Output.printString("You Lost!");
+            do Output.moveCursor(9, 7);
+            do Output.printString("You Score : ");
+            do Output.moveCursor(11, 7);
+            do Output.printInt(score);
+            return;
+      }
+
+      // Implemented Modulo math function for generating random numbers.
+	function int mod (int a, int b) {
+		var int div;
+		let div = a / b;
+		let div = a - (div*b);
+		return div;
+	}
+      
+}

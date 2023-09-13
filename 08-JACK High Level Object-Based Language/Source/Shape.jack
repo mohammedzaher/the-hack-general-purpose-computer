@@ -1,0 +1,180 @@
+/** Creates the Shapes and handles Drawing and Animation */
+class Shape {
+      field boolean type;
+      field int x;
+      field int y;
+      field int location;
+      field int direction;
+
+      constructor Shape new(int _x, int _y, boolean _type){
+            let x = _x;
+            let y = _y;
+            let type = _type;
+            return this;
+      }
+
+      // Disposes the Shape
+      method void dispose() {
+            do Memory.deAlloc(this);
+            return;
+      }
+
+      // Getting stats
+      method int get_x(){
+            return x;
+      }
+
+      method int get_y(){
+            return y;
+      }
+      
+      // Draw the shapes
+      method void draw(){
+            let location = x + (y * 32);
+            if(type){
+                  // drawing balls
+                  do Shape.draw_diamond(location);
+            }
+            if(~type){
+                  // drawing the basket
+                  do Shape.draw_basket(location);
+            }
+            return;
+      }
+
+      // Movements
+      // Moves the ball down by 2 pixels
+      method void move_down(){
+            if(y < 203){
+                  do Screen.setColor(false);
+                  do erase();
+                  let y = y + 2;
+                  do Screen.setColor(true);
+                  do draw();
+            }
+            return;
+      }
+      // Moves the basket right 
+      method void move_right(){
+            if(x < 20){
+                  do Screen.setColor(false);
+                  do erase();
+                  let x = x + 1;
+                  do Screen.setColor(true);
+                  do draw();
+            }
+            return;
+      }
+      // Moves the basket left
+      method void move_left(){
+            if(x > 11){
+                  do Screen.setColor(false);
+                  do erase();
+                  let x = x - 1;
+                  do Screen.setColor(true);
+                  do draw();
+            }
+            return;
+      }
+      // Checks if the ball gets in the basket or not
+      method boolean validate(Shape other){
+            var int x_other;
+            var int y_other;
+            let x_other = other.get_x();
+            let y_other = other.get_y();
+            if((x_other = x) & (y_other > 200)){
+                  return true;
+            }
+            else {
+                  return false;
+            }
+      }
+      // Checks if you lost
+      method boolean die(){
+            if(y > 200) {
+                  return true;
+            }
+            return false;
+      }
+      // Used for moving the shape (erase then draw)
+      method void erase(){
+            var int memAddress;
+            var int location;
+            let location = x+(y*32);
+            let memAddress = 16384+location;
+            do Memory.poke(memAddress+0, 0);
+            do Memory.poke(memAddress+32, 0);
+            do Memory.poke(memAddress+64, 0);
+            do Memory.poke(memAddress+96, 0);
+            do Memory.poke(memAddress+128, 0);
+            do Memory.poke(memAddress+160, 0);
+            do Memory.poke(memAddress+192, 0);
+            do Memory.poke(memAddress+224, 0);
+            do Memory.poke(memAddress+256, 0);
+            do Memory.poke(memAddress+288, 0);
+            do Memory.poke(memAddress+320, 0);
+            do Memory.poke(memAddress+352, 0);
+            do Memory.poke(memAddress+384, 0);
+            do Memory.poke(memAddress+416, 0);
+            do Memory.poke(memAddress+448, 0);
+            do Memory.poke(memAddress+480, 0);
+            return;
+      }
+
+      // Draws the basket
+      function void draw_basket(int location) {
+            var int memAddress;
+            let memAddress = 16384+location;
+            do Memory.poke(memAddress+0, 0);
+            do Memory.poke(memAddress+32, 0);
+            do Memory.poke(memAddress+64, 0);
+            do Memory.poke(memAddress+96, 0);
+            do Memory.poke(memAddress+128, -32767);
+            do Memory.poke(memAddress+160, -32767);
+            do Memory.poke(memAddress+192, -32767);
+            do Memory.poke(memAddress+224, -16381);
+            do Memory.poke(memAddress+256, -16381);
+            do Memory.poke(memAddress+288, -8185);
+            do Memory.poke(memAddress+320, -8185);
+            do Memory.poke(memAddress+352, -1);
+            do Memory.poke(memAddress+384, -1);
+            do Memory.poke(memAddress+416, -1);
+            do Memory.poke(memAddress+448, 0);
+            do Memory.poke(memAddress+480, 0);
+            return;
+      }
+
+      // Draws the Diamonds
+      function void draw_diamond(int location) {
+            var int memAddress;
+            let memAddress = 16384+location;
+            do Memory.poke(memAddress+0, 384);
+            do Memory.poke(memAddress+32, 960);
+            do Memory.poke(memAddress+64, 2016);
+            do Memory.poke(memAddress+96, 4080);
+            do Memory.poke(memAddress+128, 8184);
+            do Memory.poke(memAddress+160, 16380);
+            do Memory.poke(memAddress+192, 32766);
+            do Memory.poke(memAddress+224, -1);
+            do Memory.poke(memAddress+256, -1);
+            do Memory.poke(memAddress+288, 32766);
+            do Memory.poke(memAddress+320, 16380);
+            do Memory.poke(memAddress+352, 8184);
+            do Memory.poke(memAddress+384, 4080);
+            do Memory.poke(memAddress+416, 2016);
+            do Memory.poke(memAddress+448, 960);
+            do Memory.poke(memAddress+480, 384);
+            return;
+      }
+
+      function void draw_Rect() {
+            // 11 x 14
+            do Screen.drawLine(168, 16, 344, 16);
+            do Screen.drawLine(344, 16, 344, 240);
+            do Screen.drawLine(168, 16, 168, 240);
+            do Screen.drawLine(168, 240, 344, 240);
+            return;
+      }
+
+
+}
